@@ -1,54 +1,32 @@
-FROM ubuntu:16.04
-MAINTAINER Sprheany <sprheany@gmail.com>
+FROM centos:7
+LABEL maintainer "sprheany@gmail.com"
 
-ENV VERSION_SDK_TOOLS "25.2.4"
-ENV VERSION_GRADLE "2.14.1"
-ENV SDK_PACKAGES "build-tools-25.0.2,android-25,platform-tools,extra-android-m2repository,extra-android-support,extra-google-m2repository"
+USER root
 
-ENV ANDROID_HOME /usr/local/android-sdk-linux
-ENV GRADLE_HOME /usr/local/gradle-${VERSION_GRADLE}
+RUN yum install -y unzip git
 
-ENV PATH $PATH:${ANDROID_HOME}/tools
-ENV PATH $PATH:${ANDROID_HOME}/platform-tools
-ENV PATH $PATH:${GRADLE_HOME}/bin
+# install java8
 
-# Install dependencies
+ARG JDK_VERSION="1.8.0.275.b01-0.el7_9.x86_64"
+ENV JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk-$JDK_VERSION"
 
-RUN dpkg --add-architecture i386 && \
-    apt-get -qq update && \
-    apt-get install -qqy --no-install-recommends \
-        lib32z1 \
-        lib32ncurses5 \
-        libbz2-1.0:i386 \
-        lib32stdc++6 \
-        openjdk-8-jdk \
-        wget \
-        unzip \
-        expect \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN yum install -y java-1.8.0-openjdk-devel-$JDK_VERSION
 
-# Fix certificates
+ENV PATH $JAVA_HOME/bin:$PATH
 
-RUN rm -f /etc/ssl/certs/java/cacerts; \
-    /var/lib/dpkg/info/ca-certificates-java.postinst configure
+# install android sdk
 
-# Install gradle
+ARG SDK_TOOL_URL="https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip"
+ENV ANDROID_HOME="/usr/local/android-sdk-linux"
 
-RUN wget -q https://services.gradle.org/distributions/gradle-${VERSION_GRADLE}-bin.zip -O /gradle.zip
-RUN unzip /gradle.zip -d /usr/local && \
-    rm -v /gradle.zip
+RUN mkdir -p $ANDROID_HOME && \
+    cd $ANDROID_HOME && \
+    curl -o sdk.zip $SDK_TOOL_URL && \
+    unzip sdk.zip && \
+    rm sdk.zip
 
-# Install the SDK tools
+RUN echo y | $ANDROID_HOME/tools/bin/sdkmanager --sdk_root=$ANDROID_HOME "cmdline-tools;latest" && \
+    yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses && \
+    $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools"
 
-RUN wget -q https://dl.google.com/android/repository/tools_r${VERSION_SDK_TOOLS}-linux.zip -O /tools.zip
-RUN unzip /tools.zip -d /${ANDROID_HOME} && \
-    rm -v /tools.zip
-
-# Install our helpers
-
-COPY tools /usr/local/bin/tools
-RUN chmod +x /usr/local/bin/tools/agree-to-licenses.sh
-
-# And use them to install Android dependencies
-
-RUN /usr/local/bin/tools/agree-to-licenses.sh "android update sdk --all --no-ui --filter ${SDK_PACKAGES}"
+ENV PATH $ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH

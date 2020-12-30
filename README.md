@@ -23,10 +23,5 @@ script:
 
 ## 已安装环境
 - [x] OpenJDK 8
-- [x] Android SDK Tools 25.2.4
-- [x] Android SDK Platform-tools 25.0.2
-- [x] Android SDK Build-tools 25.0.2
-- [x] Android Platform 25
-- [x] Android Support Repository
-- [x] Android Support Library
-- [x] Google Repository
+- [x] Android SDK Tools
+- [x] Android SDK Platform-tools
