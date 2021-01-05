@@ -22,6 +22,7 @@ script:
 ```
 
 ## 已安装环境
+- [x] Python 3.6.8
 - [x] OpenJDK 8
 - [x] Android SDK Tools
 - [x] Android SDK Platform-tools

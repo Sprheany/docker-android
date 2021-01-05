@@ -3,7 +3,7 @@ LABEL maintainer "sprheany@gmail.com"
 
 USER root
 
-RUN yum install -y unzip git
+RUN yum install -y unzip python3
 
 # install java8
 
@@ -27,6 +27,7 @@ RUN mkdir -p $ANDROID_HOME && \
 
 RUN echo y | $ANDROID_HOME/tools/bin/sdkmanager --sdk_root=$ANDROID_HOME "cmdline-tools;latest" && \
     yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses && \
-    $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools"
+    $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" && \
+    touch ~/.android/repositories.cfg
 
 ENV PATH $ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
