@@ -3,7 +3,7 @@ LABEL maintainer "sprheany@gmail.com"
 
 USER root
 
-ARG SDK_TOOL_URL="https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip"
+ARG SDK_TOOL_URL="https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip"
 ENV ANDROID_HOME="/usr/local/android-sdk-linux"
 
 RUN yum install -y unzip python3 && \
