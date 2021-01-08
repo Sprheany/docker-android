@@ -1,25 +1,13 @@
-FROM centos:7
+FROM adoptopenjdk/openjdk8:centos
 LABEL maintainer "sprheany@gmail.com"
 
 USER root
 
-RUN yum install -y unzip python3
-
-# install java8
-
-ARG JDK_VERSION="1.8.0.275.b01-0.el7_9.x86_64"
-ENV JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk-$JDK_VERSION"
-
-RUN yum install -y java-1.8.0-openjdk-devel-$JDK_VERSION
-
-ENV PATH $JAVA_HOME/bin:$PATH
-
-# install android sdk
-
-ARG SDK_TOOL_URL="https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip"
+ARG SDK_TOOL_URL="https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip"
 ENV ANDROID_HOME="/usr/local/android-sdk-linux"
 
-RUN mkdir -p $ANDROID_HOME && \
+RUN yum install -y unzip python3 && \
+    mkdir -p $ANDROID_HOME && \
     cd $ANDROID_HOME && \
     curl -o sdk.zip $SDK_TOOL_URL && \
     unzip sdk.zip && \
